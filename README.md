@@ -1,80 +1,66 @@
-# MERN Task Management Application
+# TaskOrbit – Scalable MERN Workflow Management Platform
 
-A production-ready full-stack task management application build using the MERN stack (MongoDB, Express, React, Node.js).
+TaskOrbit is a scalable full-stack workflow and productivity management platform built using the MERN stack. The application demonstrates secure backend architecture, JWT authentication, role-based access control, and modular REST API development.
 
-## Features
+---
 
-- **Authentication**: JWT-based authentication with bcrypt password hashing.
-- **Role-Based Access**: 
-  - `user`: Can manage their own tasks.
-  - `admin`: Can view all tasks and all registered users.
-- **Task Management CRUD**: Create, Read, Update, Delete tasks with statuses (Pending, In Progress, Completed).
-- **Modern UI**: Clean vanilla CSS design system featuring dark mode support, glassmorphism, responsive grid layouts, and micro-animations.
+# Features
 
-## Technology Stack
+## Authentication & Security
+- JWT-based authentication
+- Password hashing using bcrypt
+- Protected API routes
+- Role-based authorization (User/Admin)
+- Environment variable configuration
 
-- **Frontend**: React, Vite, React Router, Context API, Axios, Next-gen Vanilla CSS.
-- **Backend**: Node.js, Express, MongoDB (Mongoose), JWT.
+## Role-Based Access
 
-## Project Structure
+### User
+- Register & login
+- Create personal tasks
+- View/update/delete own tasks
 
-- `frontend/`: The Vite React application.
-- `backend/`: The Node.js Express server.
+### Admin
+- View all users
+- View all tasks
+- Administrative access control
 
-## Installation & Setup
+## Task Management
+- Create tasks
+- Update task status
+- Delete tasks
+- Task tracking workflow
 
-1. **Clone and Install Backend Dependencies**
-   ```bash
-   cd backend
-   npm install
-   ```
+## Frontend
+- React + Vite frontend
+- Protected dashboard
+- Responsive UI
+- API integration using Axios
+- Authentication state management using Context API
 
-2. **Configure Backend Environment Variables**
-   Ensure your `backend/.env` file is properly configured.
-   ```
-   PORT=5000
-   MONGO_URI=mongodb://127.0.0.1:27017/taskmanager
-   JWT_SECRET=supersecret12345
-   NODE_ENV=development
-   ```
+---
 
-3. **Install Frontend Dependencies**
-   ```bash
-   cd frontend
-   npm install
-   ```
+# Tech Stack
 
-## Running the Application
+## Frontend
+- React.js
+- Vite
+- React Router
+- Axios
+- Context API
 
-This project uses a dual-server development setup.
+## Backend
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- bcrypt
 
-**Start the Backend (API Server):**
-```bash
-cd backend
-npm start
-```
-*(The API runs on `http://localhost:5000`)*
+---
 
-**Start the Frontend (Dev Server):**
-```bash
-cd frontend
-npm run dev
-```
-*(The React app runs on `http://localhost:5173` and proxies API requests to port 5000)*
-
-## Assigning an Admin Role
-
-By default, new users register with the `user` role. To grant an `admin` role to a user, access your MongoDB instance and update the user's document manually:
-```json
-{
-  "$set": { "role": "admin" }
-}
-```
-
-## Build for Production
+# Project Structure
 
 ```bash
-cd frontend
-npm run build
-```
-The output will be inside `frontend/dist/`.
+frontend/
+backend/
