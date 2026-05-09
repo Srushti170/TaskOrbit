@@ -23,6 +23,9 @@ function Register() {
 
   return (
     <div className="auth-container">
+      <div className="auth-page-top">
+        <div className="auth-brand">TaskOrbit</div>
+      </div>
       <div className="auth-card fade-in">
         <h2 className="auth-title">Create an Account</h2>
         <form onSubmit={onSubmit}>

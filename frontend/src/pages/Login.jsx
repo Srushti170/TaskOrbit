@@ -23,6 +23,9 @@ function Login() {
 
   return (
     <div className="auth-container">
+      <div className="auth-page-top">
+        <div className="auth-brand">TaskOrbit</div>
+      </div>
       <div className="auth-card fade-in">
         <h2 className="auth-title">Welcome Back</h2>
         <form onSubmit={onSubmit}>

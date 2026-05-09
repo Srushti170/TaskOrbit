@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
-import TaskCard from '../components/TaskCard';
-import TaskForm from '../components/TaskForm';
+import DashboardHeader from '../components/dashboard/DashboardHeader';
+import TaskStatsGrid from '../components/dashboard/TaskStatsGrid';
+import TaskModal from '../components/dashboard/TaskModal';
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchTasks = async () => {
     try {
@@ -31,6 +33,7 @@ function Dashboard() {
         await api.post('/tasks', taskData);
         toast.success('Task created');
       }
+      setIsModalOpen(false);
       fetchTasks();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Operation failed');
@@ -49,28 +52,74 @@ function Dashboard() {
     }
   };
 
+  const handleEditClick = (task) => {
+    setEditingTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteAll = async () => {
+    if (!tasks.length) {
+      toast.info('No tasks available to delete.');
+      return;
+    }
+
+    if (window.confirm('Delete all tasks? This cannot be undone.')) {
+      try {
+        await api.delete('/tasks');
+        toast.success('All tasks deleted');
+        fetchTasks();
+      } catch (error) {
+        toast.error('Failed to delete all tasks');
+      }
+    }
+  };
+
+  const today = useMemo(() => new Date(), []);
+  const todayLabel = today.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  const dueTodayCount = tasks.filter((task) => {
+    if (!task.deadline) return false;
+    const deadlineDate = new Date(task.deadline);
+    return deadlineDate.toDateString() === today.toDateString();
+  }).length;
+
   return (
-    <div className="dashboard-grid">
-      <div>
-        <TaskForm onSubmit={handleCreateOrUpdate} initialData={editingTask} />
+    <div className="dashboard-layout fade-in">
+      <DashboardHeader />
+
+      <div className="dashboard-topbar">
+        <div>
+          <div className="page-label">Today</div>
+          <h1 className="page-title">{todayLabel}</h1>
+          <p className="page-metric">{tasks.length} tasks • {dueTodayCount} due today</p>
+        </div>
+
+        <div className="dashboard-actions">
+          <button className="btn btn-outline" onClick={handleDeleteAll}>
+            Delete All
+          </button>
+          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            + Create Task
+          </button>
+        </div>
       </div>
-      <div>
-        <h2 className="task-title mb-4" style={{ fontSize: '1.5rem' }}>My Tasks</h2>
-        {tasks.length === 0 ? (
-          <p className="text-muted">No tasks found. Create one to get started!</p>
-        ) : (
-          <div>
-            {tasks.map((task) => (
-              <TaskCard
-                key={task._id}
-                task={task}
-                onDelete={handleDelete}
-                onEdit={setEditingTask}
-              />
-            ))}
-          </div>
-        )}
+
+      <div className="dashboard-main-grid">
+        <TaskStatsGrid
+          tasks={tasks}
+          onDelete={handleDelete}
+          onEdit={handleEditClick}
+        />
       </div>
+
+      <TaskModal 
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingTask(null);
+        }}
+        onSubmit={handleCreateOrUpdate}
+        initialData={editingTask}
+      />
     </div>
   );
 }

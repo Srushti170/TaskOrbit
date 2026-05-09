@@ -22,12 +22,13 @@ export const getTasks = async (req, res, next) => {
 // @access  Private
 export const createTask = async (req, res, next) => {
   try {
-    const { title, description, status } = req.body;
+    const { title, description, status, deadline } = req.body;
 
     const task = new Task({
       title,
       description,
       status: status || 'pending',
+      deadline: deadline ? new Date(deadline) : undefined,
       createdBy: req.user._id,
     });
 
@@ -55,6 +56,7 @@ export const updateTask = async (req, res, next) => {
       task.title = req.body.title || task.title;
       task.description = req.body.description || task.description;
       task.status = req.body.status || task.status;
+      task.deadline = req.body.deadline ? new Date(req.body.deadline) : task.deadline;
 
       const updatedTask = await task.save();
       res.json(updatedTask);
@@ -87,6 +89,19 @@ export const deleteTask = async (req, res, next) => {
       res.status(404);
       throw new Error('Task not found');
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAllTasks = async (req, res, next) => {
+  try {
+    if (req.user.role === 'admin') {
+      await Task.deleteMany({});
+    } else {
+      await Task.deleteMany({ createdBy: req.user._id });
+    }
+    res.json({ message: 'All tasks removed' });
   } catch (error) {
     next(error);
   }
