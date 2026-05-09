@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api', // Will be proxy config in vite.config.js
+  baseURL: 'https://taskorbit-4b5s.onrender.com/api', // Will be proxy config in vite.config.js
 });
 
 api.interceptors.request.use(
