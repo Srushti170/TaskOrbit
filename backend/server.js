@@ -14,12 +14,24 @@ connectDB();
 
 const app = express();
 
-app.use(
-  cors({
-    origin: 'https://task-orbit-sigma.vercel.app',
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:5173',
+  'https://taskorbit-4b5s.onrender.com',
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
